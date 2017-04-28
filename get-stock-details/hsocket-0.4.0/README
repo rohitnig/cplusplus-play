@@ -1,0 +1,39 @@
+==============================================================================
+                                HSOCKET LIBRARY
+==============================================================================
+
+Writer     : Hojin Choi <pynoos@users.sourceforge.net>
+Last Update: 2002. 2. 26
+License    : LGPL (Less General Public Library)
+Purpose    :
+	This library is intended for providing C++ Wrapper class
+	for native socket api. It is tested under g++(*NIX, Linux, Cygwin),
+	Visual C++ Environments, and will support vendor supported C++
+	compilers.
+
+Support    :
+	Until these release you can use below.
+
+	1. TCP Socket.
+	2. UDP Socket.
+	3. UNIX Socket (Under *NIX, Linux)
+	4. Multiple socket selecting.
+	5. Event Handle for socket by WSASelect (Under Win32 VC++)
+	   (Naturally, the socket is conterted non-blocking by the function.)
+	6. UDP broadcasting function
+	7. TCP TIMEWAIT lingering control.
+	8. ServerSocket (It supports internally forked child processes)
+
+Tested environment list:
+	Solaris 8	(g++ 3.0)
+	Solaris 2.5.1	(g++ 2.8.1)
+	AIX 4.3 	(g++ 2.9)
+	RedHat 7.1	(g++ 2.96)
+	Cygwin 1.3.12   (g++ 2.95.3-5)
+	Win2000		(Visual Studio.NET 6)
+
+Thank you a lot for using this libray.
+Any helps can be welcome at any time.
+
+Install    :
+	Look INSTALL file in this directory.
