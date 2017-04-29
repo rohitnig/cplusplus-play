@@ -1,8 +1,11 @@
 #include <curl/curl.h>
+#include <algorithm>
 #include <stdio.h>
 #include <iostream>
 #include <string>
 #include <json.hpp>
+
+using json = nlohmann::json;
 
 size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, size_t nmemb, std::string *s)
 {
@@ -32,6 +35,7 @@ int main(int argc, char* argv[])
    if(curl) {
 	if (argc>1) url += argv[1]; else url += "AAPL";
 	std::string s;
+	json j;
 	std::cout << url << std::endl;
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWrite_CallbackFunc_StdString);
@@ -41,6 +45,13 @@ int main(int argc, char* argv[])
 	curl_easy_cleanup(curl);
 	printf("Data is:\n%s\n-------------");
 	std::cout << s << std::endl;
+
+	std::replace(s.begin(), s.end(), '\n', ' ');
+	std::replace(s.begin(), s.end(), '\/', ' ');
+	//std::replace(s.begin, s.end, "\n", "");
+	j = s;
+	std::cout << j;
+	//std::cout << std::endl << j["id"] ;
    }
    return 0;
 }
