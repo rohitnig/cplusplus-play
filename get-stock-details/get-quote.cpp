@@ -3,11 +3,19 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
-#include <json.hpp>
+#include <regex>
+//#include <json.hpp>
+//#include <json/json.h>
 
-using json = nlohmann::json;
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
-size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, size_t nmemb, std::string *s)
+//using json = nlohmann::json;
+using namespace rapidjson;
+using namespace std;
+
+size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, size_t nmemb, string *s)
 {
     size_t newLength = size*nmemb;
     size_t oldLength = s->size();
@@ -15,43 +23,46 @@ size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, size_t nmem
     {
         s->resize(oldLength + newLength);
     }
-    catch(std::bad_alloc &e)
+    catch(bad_alloc &e)
     {
         //handle memory problem
         return 0;
     }
 
-    std::copy((char*)contents,(char*)contents+newLength,s->begin()+oldLength);
+    copy((char*)contents,(char*)contents+newLength,s->begin()+oldLength);
     return size*nmemb;
 }
 
 int main(int argc, char* argv[])
 {
+   Document json_object;
    CURL *curl;
    CURLcode res;
-   std::string url { "http://finance.google.com/finance/info?client=ig&q=NASDAQ:" };
+   string url { "http://finance.google.com/finance/info?client=ig&q=NASDAQ:" };
 
    curl = curl_easy_init();
    if(curl) {
 	if (argc>1) url += argv[1]; else url += "AAPL";
-	std::string s;
-	json j;
-	std::cout << url << std::endl;
+	string s;
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWrite_CallbackFunc_StdString);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
 	res = curl_easy_perform(curl);
 	/* always cleanup */
 	curl_easy_cleanup(curl);
-	printf("Data is:\n%s\n-------------");
-	std::cout << s << std::endl;
+	
+	replace(s.begin(), s.end(), '\n', ' ');
+	replace(s.begin(), s.end(), '/', ' ');
+	replace(s.begin(), s.end(), '[', ' ');
+	replace(s.begin(), s.end(), ']', ' ');
+	
+	//regex reg("\[");
+	//s = regex_replace (s, reg, "");
+	//cout << s << endl;
 
-	std::replace(s.begin(), s.end(), '\n', ' ');
-	std::replace(s.begin(), s.end(), '\/', ' ');
-	//std::replace(s.begin, s.end, "\n", "");
-	j = s;
-	std::cout << j;
-	//std::cout << std::endl << j["id"] ;
+	json_object.Parse(s.c_str());
+	assert(json_object.IsObject());
+	cout << json_object["l"].GetString() << endl;
    }
    return 0;
 }
