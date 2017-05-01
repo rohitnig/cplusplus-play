@@ -102,7 +102,7 @@ public class Shell {
         Matrix BM = new Matrix(Aarray);
         Matrix CM = AM.times(BM);
 
-        printMatrix(CM, n);
+        //printMatrix(CM, n);
     }
 
 }
